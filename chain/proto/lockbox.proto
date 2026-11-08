@@ -1,0 +1,255 @@
+syntax = "proto3";
+
+package lockbox.v1;
+
+import "cosmos/msg/v1/msg.proto";
+
+option go_package = "lockbox/chain/lockbox";
+
+message Account {
+  string account_id = 1;
+  string registration_key = 2;
+  string owner_address = 3;
+}
+
+message RegisteredSigner {
+  string signer_id = 1;
+  string signer_address = 2;
+}
+
+message KeyRef {
+  string key_ref = 1;
+  string account_id = 2;
+  string venue_address = 3;
+  repeated string committee = 4;
+  uint32 threshold = 5;
+}
+
+message AssetCap {
+  string asset = 1;
+  string max_order_size = 2;
+  string max_daily_size = 3;
+}
+
+message Policy {
+  string key_ref = 1;
+  string delegate_key = 2;
+  uint64 epoch = 3;
+  repeated string venues = 4;
+  string vault_address = 5;
+  repeated AssetCap asset_caps = 6;
+  uint64 expires_at = 7;
+  bool revoked = 8;
+  uint64 revoked_at = 9;
+}
+
+message AllowedRelease {
+  string binary_hash = 1;
+  uint64 activate_height = 2;
+}
+
+message LogEntry {
+  uint64 height = 1;
+  string request_id = 2;
+  string key_ref = 3;
+  string signer_id = 4;
+  string decision = 5;
+  string reason = 6;
+  string intent_hash = 7;
+}
+
+message TapeAnchor {
+  string segment_id = 1;
+  string segment_hash = 2;
+}
+
+message KeyRefPolicyEpoch {
+  string key_ref = 1;
+  uint64 policy_epoch = 2;
+}
+
+message GenesisState {
+  uint64 release_activation_delay_blocks = 1;
+  repeated Account accounts = 2;
+  repeated RegisteredSigner signers = 3;
+  repeated KeyRef key_refs = 4;
+  repeated KeyRefPolicyEpoch key_ref_policy_epochs = 5;
+  repeated Policy policies = 6;
+  repeated AllowedRelease allowed_releases = 7;
+  repeated LogEntry log_entries = 8;
+  repeated TapeAnchor tape_anchors = 9;
+}
+
+service Msg {
+  option (cosmos.msg.v1.service) = true;
+  rpc RegisterSigner(MsgRegisterSigner) returns (MsgRegisterSignerResponse);
+  rpc RegisterAccount(MsgRegisterAccount) returns (MsgRegisterAccountResponse);
+  rpc ClaimOwner(MsgClaimOwner) returns (MsgClaimOwnerResponse);
+  rpc RegisterKeyRef(MsgRegisterKeyRef) returns (MsgRegisterKeyRefResponse);
+  rpc SetPolicy(MsgSetPolicy) returns (MsgSetPolicyResponse);
+  rpc RevokePolicy(MsgRevokePolicy) returns (MsgRevokePolicyResponse);
+  rpc AllowRelease(MsgAllowRelease) returns (MsgAllowReleaseResponse);
+  rpc RecordDecision(MsgRecordDecision) returns (MsgRecordDecisionResponse);
+  rpc AnchorTape(MsgAnchorTape) returns (MsgAnchorTapeResponse);
+}
+
+message MsgRegisterSigner {
+  option (cosmos.msg.v1.signer) = "submitter";
+  string submitter = 1;
+  string signer_id = 2;
+  string signer_address = 3;
+}
+message MsgRegisterSignerResponse {}
+
+message MsgRegisterAccount {
+  option (cosmos.msg.v1.signer) = "submitter";
+  string submitter = 1;
+  string account_id = 2;
+  string registration_key = 3;
+}
+message MsgRegisterAccountResponse {}
+
+message MsgClaimOwner {
+  option (cosmos.msg.v1.signer) = "submitter";
+  string submitter = 1;
+  string account_id = 2;
+  string owner_address = 3;
+  string nonce = 4;
+  uint64 issued_at = 5;
+  uint64 expires_at = 6;
+  string owner_signature = 7;
+  string registration_signature = 8;
+}
+message MsgClaimOwnerResponse {}
+
+message MsgRegisterKeyRef {
+  option (cosmos.msg.v1.signer) = "submitter";
+  string submitter = 1;
+  string key_ref = 2;
+  string account_id = 3;
+  string venue_address = 4;
+  repeated string committee = 5;
+  uint32 threshold = 6;
+  string owner_signature = 7;
+}
+message MsgRegisterKeyRefResponse {}
+
+message MsgSetPolicy {
+  option (cosmos.msg.v1.signer) = "submitter";
+  string submitter = 1;
+  string key_ref = 2;
+  string delegate_key = 3;
+  uint64 epoch = 4;
+  repeated string venues = 5;
+  string vault_address = 6;
+  repeated AssetCap asset_caps = 7;
+  uint64 expires_at = 8;
+  string owner_signature = 9;
+}
+message MsgSetPolicyResponse {
+  uint64 epoch = 1;
+}
+
+message MsgRevokePolicy {
+  option (cosmos.msg.v1.signer) = "submitter";
+  string submitter = 1;
+  string key_ref = 2;
+  string delegate_key = 3;
+  uint64 epoch = 4;
+  string owner_signature = 5;
+}
+message MsgRevokePolicyResponse {
+  uint64 epoch = 1;
+}
+
+message MsgAllowRelease {
+  option (cosmos.msg.v1.signer) = "submitter";
+  string submitter = 1;
+  string binary_hash = 2;
+}
+message MsgAllowReleaseResponse {
+  uint64 activate_height = 1;
+}
+
+message MsgRecordDecision {
+  option (cosmos.msg.v1.signer) = "submitter";
+  string submitter = 1;
+  string request_id = 2;
+  string key_ref = 3;
+  string signer_id = 4;
+  string decision = 5;
+  string reason = 6;
+  string intent_hash = 7;
+}
+message MsgRecordDecisionResponse {}
+
+message MsgAnchorTape {
+  option (cosmos.msg.v1.signer) = "submitter";
+  string submitter = 1;
+  string segment_id = 2;
+  string segment_hash = 3;
+}
+message MsgAnchorTapeResponse {}
+
+service Query {
+  rpc Account(QueryAccountRequest) returns (QueryAccountResponse);
+  rpc Signer(QuerySignerRequest) returns (QuerySignerResponse);
+  rpc KeyRef(QueryKeyRefRequest) returns (QueryKeyRefResponse);
+  rpc Policy(QueryPolicyRequest) returns (QueryPolicyResponse);
+  rpc Release(QueryReleaseRequest) returns (QueryReleaseResponse);
+  rpc LogEntries(QueryLogEntriesRequest) returns (QueryLogEntriesResponse);
+  rpc Anchor(QueryAnchorRequest) returns (QueryAnchorResponse);
+}
+
+message QueryAccountRequest {
+  string account_id = 1;
+}
+message QueryAccountResponse {
+  Account account = 1;
+}
+
+message QuerySignerRequest {
+  string signer_id = 1;
+}
+message QuerySignerResponse {
+  RegisteredSigner signer = 1;
+}
+
+message QueryKeyRefRequest {
+  string key_ref = 1;
+}
+message QueryKeyRefResponse {
+  KeyRef key_ref = 1;
+  uint64 policy_epoch = 2;
+}
+
+message QueryPolicyRequest {
+  string key_ref = 1;
+  string delegate_key = 2;
+}
+message QueryPolicyResponse {
+  Policy policy = 1;
+}
+
+message QueryReleaseRequest {
+  string binary_hash = 1;
+}
+message QueryReleaseResponse {
+  AllowedRelease release = 1;
+}
+
+message QueryLogEntriesRequest {
+  uint64 first_sequence = 1;
+  uint32 limit = 2;
+}
+message QueryLogEntriesResponse {
+  repeated LogEntry entries = 1;
+  uint64 next_sequence = 2;
+}
+
+message QueryAnchorRequest {
+  string segment_id = 1;
+}
+message QueryAnchorResponse {
+  TapeAnchor anchor = 1;
+}

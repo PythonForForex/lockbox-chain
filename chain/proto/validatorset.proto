@@ -1,0 +1,75 @@
+syntax = "proto3";
+
+package lockbox.validatorset.v1;
+
+import "cosmos/msg/v1/msg.proto";
+
+option go_package = "lockbox/chain/validatorset";
+
+message Validator {
+  string consensus_public_key = 1;
+  int64 power = 2;
+  string moniker = 3;
+  bool founding = 4;
+}
+
+message GenesisState {
+  string admin = 1;
+  repeated Validator validators = 2;
+}
+
+service Msg {
+  option (cosmos.msg.v1.service) = true;
+  rpc AddValidator(MsgAddValidator) returns (MsgAddValidatorResponse);
+  rpc SetValidatorPower(MsgSetValidatorPower) returns (MsgSetValidatorPowerResponse);
+  rpc RemoveValidator(MsgRemoveValidator) returns (MsgRemoveValidatorResponse);
+}
+
+message MsgAddValidator {
+  option (cosmos.msg.v1.signer) = "admin";
+  string admin = 1;
+  string consensus_public_key = 2;
+  int64 power = 3;
+  string moniker = 4;
+  bool founding = 5;
+}
+message MsgAddValidatorResponse {}
+
+message MsgSetValidatorPower {
+  option (cosmos.msg.v1.signer) = "admin";
+  string admin = 1;
+  string consensus_public_key = 2;
+  int64 power = 3;
+}
+message MsgSetValidatorPowerResponse {}
+
+message MsgRemoveValidator {
+  option (cosmos.msg.v1.signer) = "admin";
+  string admin = 1;
+  string consensus_public_key = 2;
+}
+message MsgRemoveValidatorResponse {}
+
+service Query {
+  rpc Admin(QueryAdminRequest) returns (QueryAdminResponse);
+  rpc Validators(QueryValidatorsRequest) returns (QueryValidatorsResponse);
+  rpc Validator(QueryValidatorRequest) returns (QueryValidatorResponse);
+}
+
+message QueryAdminRequest {}
+message QueryAdminResponse {
+  string admin = 1;
+}
+
+message QueryValidatorsRequest {}
+message QueryValidatorsResponse {
+  repeated Validator validators = 1;
+  int64 total_power = 2;
+}
+
+message QueryValidatorRequest {
+  string consensus_public_key = 1;
+}
+message QueryValidatorResponse {
+  Validator validator = 1;
+}
