@@ -16,6 +16,6 @@ The Lockbox development network. It runs in dev mode with test keys, and we are 
 ## Changes to expect
 
 - **Peers.** The list can change when we move a node. `peers.txt` is always current.
-- **Fresh genesis.** The TraderSwift network chain will start from a fresh genesis. It has no date yet, and when it does, the date goes here. Until then this devnet keeps running. When the new chain starts, you re-sync from its genesis in a new folder under `networks/`.
+- **Fresh genesis.** `lockbox-milestone-a-1` continues. If Lockbox ever starts from a fresh genesis, it will be announced here first, and you re-sync from a new folder under `networks/`.
 
 To join, follow [docs/VALIDATOR_JOIN.md](../../docs/VALIDATOR_JOIN.md).
