@@ -19,3 +19,5 @@ The Lockbox development network. It runs in dev mode with test keys, and we are 
 - **Fresh genesis.** `lockbox-milestone-a-1` continues. If Lockbox ever starts from a fresh genesis, it will be announced here first, and you re-sync from a new folder under `networks/`.
 
 To join, follow [docs/VALIDATOR_JOIN.md](../../docs/VALIDATOR_JOIN.md).
+
+What this network has proven so far: [docs/MILESTONE_A_RESULTS.md](../../docs/MILESTONE_A_RESULTS.md).

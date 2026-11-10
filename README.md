@@ -1,5 +1,7 @@
 # Lockbox
 
+[Milestone A results](docs/MILESTONE_A_RESULTS.md): what was proven and how to check it yourself.
+
 Lockbox is part of TraderSwift.
 
 ## TraderSwift
