@@ -1,8 +1,8 @@
 #!/bin/bash
 set -euo pipefail
 chain_directory="$(cd "$(dirname "$0")" && pwd)"
-toolchain_gopath="$HOME/.local/toolchains/gopath"
-export PATH="$HOME/.local/toolchains/go/bin:$toolchain_gopath/bin:$PATH"
+toolchain_gopath="$(go env GOPATH)"
+export PATH="$toolchain_gopath/bin:$PATH"
 software_development_kit_proto="$toolchain_gopath/pkg/mod/github.com/cosmos/cosmos-sdk@v0.55.0/proto"
 workspace="$chain_directory/build/proto_workspace"
 

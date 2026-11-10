@@ -4,11 +4,10 @@ One Rust daemon per signer. Distributed key generation for secp256k1, 2-of-3 sig
 
 ## Build and run
 
-GMP is built from source by `gmp-mpfr-sys`, which needs `m4` on the PATH (built user-local at `~/.local/toolchains/m4`). No `libgmp-dev`, no root.
+GMP is built from source by `gmp-mpfr-sys`, which needs `m4` on the PATH (a user-local build is fine). No `libgmp-dev`, no root.
 
 ```
-RUSTUP_HOME=~/.local/toolchains/rustup CARGO_HOME=~/.local/toolchains/cargo \
-PATH=~/.local/toolchains/m4/bin:~/.local/toolchains/cargo/bin:$PATH cargo build --release
+cargo build --release
 lockbox-signer signer-config.json
 ```
 
@@ -19,7 +18,7 @@ Config fields are in `src/signer_config.rs`. `identity_private_key_file` holds t
 | File | What |
 |---|---|
 | `threshold_protocol.rs` | The only file that calls the library: keygen, auxiliary generation, interactive signing, low-s, recovery id |
-| `hyperliquid_action.rs` | Builds the action, its msgpack and the phantom-agent digest from an intent. Port of `hl-signer/lib/hl_signing.py` |
+| `hyperliquid_action.rs` | Builds the action, its msgpack and the phantom-agent digest from an intent. Follows Hyperliquid's published signing scheme |
 | `order_intent.rs` | Strict JSON, canonical bytes, delegate signature, decimal parsing |
 | `policy_reader.rs` | The only file that knows the chain's read shapes |
 | `decision_recorder.rs` | Durable outbox and the one worker that drains it to the chain. Never blocks the order path |

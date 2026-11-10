@@ -63,7 +63,7 @@ REST and CometBFT are different ports on the same node (`chain/README.md` has th
 
 ## Venue digest
 
-Same bytes as `action_hash` in `hl-signer/lib/hl_signing.py`:
+Same bytes as Hyperliquid's own `action_hash`:
 
 `msgpack(action) + nonce (8 bytes big-endian) + (0x00 | 0x01 + 20-byte vault) + 0x00 + expiresAfter (8 bytes big-endian)`
 
@@ -116,6 +116,7 @@ Result event the import job writes after posting, on the operator's event stream
 Python, one per key, HTTP on loopback. The delegate signature covers `venue_nonce`, and the design says a coordinator cannot forge an intent, so it never holds the delegate key. A round therefore has two steps:
 
 - `POST /prepare` `{delegate_key, vault_address}` returns `{key_ref, policy_epoch, venue_nonce, expires_at, rearm_intent}`. `rearm_intent` is null unless the dead-man needs re-arming; when present it is an unsigned `schedule_cancel` intent with its own nonce, its time limited to the policy's close-out deadline.
+- **Hub owner check at `/prepare`**, on when `hub_rest_urls` and `hub_account_id` are set. The coordinator compares the `owner_address` of the key ref's account on Lockbox with `owner_address` from the hub's `/network/v1/account/{hub_account_id}`, case-insensitively. It refuses `{prepared: false, reason}` with `hub_account_missing`, `hub_account_unclaimed` or `hub_owner_differs`. The hub answer is cached. It is read when the coordinator connects to the hub's websocket, and again on each `network.claimed` event for that account. If the hub has never answered, the check passes, so a hub outage never stops an order.
 - `POST /intent` `{intent, rearm_intent}`, both signed by the delegate. Returns `{request_id, signed, digest, r, s, v, action, recovered, venue_status, venue_answer, rearm}` or `{signed: false, reason}`.
 
 **The client checks before it signs** (`coordinator/delegate_client.py`). `rearm_intent` must be `schedule_cancel` only, with exactly the expected fields, its own key_ref, delegate and vault, `time_ms` 15 to 600 s ahead and expiry within 120 s. Anything else is refused: nothing is signed or sent, and the reason goes back to the caller. Two prepares can arrive out of order, which uses up the earlier nonce. On `nonce_not_above_highest_signed_` the client prepares once more and retries, and the result carries `retried_after` and `retry_of`. A second refusal returns its reason. The client takes the delegate signing function as an argument and holds no key itself.

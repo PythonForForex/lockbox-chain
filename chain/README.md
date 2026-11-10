@@ -1,4 +1,4 @@
-# lockbox chain
+# The Lockbox chain
 
 Cosmos SDK v0.55.0 app, CometBFT v0.40.0, zero fees, no staking, mint, distribution or gov. Modules: auth, bank, consensus, genutil, validatorset, lockbox. Everything here is Apache-2.0. Contract: `../docs/INTERFACES.md`. Outside validators: `../docs/VALIDATOR_JOIN.md`.
 
@@ -9,7 +9,7 @@ Cosmos SDK v0.55.0 app, CometBFT v0.40.0, zero fees, no staking, mint, distribut
 | `policylogic/` | Pure rules, no SDK imports: field formats, policy validation, owner message texts, EIP-191 and ed25519 checks. The signer is the one authority on intents, so nothing here evaluates them. Depends on `x/crypto/sha3` and `dcrec/secp256k1` only |
 | `lockbox/` | The module: keeper, message servers, query server, REST routes, genesis. `lockbox.pb.go` is generated |
 | `validatorset/` | The validator set: admin, validators, the one-third rule, updates to CometBFT. `validatorset.pb.go` is generated |
-| `proto/` | `lockbox.proto`, `validatorset.proto`. Regenerate with `generate_proto.sh` (needs `buf` and `protoc-gen-gocosmos` in `~/.local/toolchains/gopath/bin`) |
+| `proto/` | `lockbox.proto`, `validatorset.proto`. Regenerate with `generate_proto.sh` (needs `buf` and `protoc-gen-gocosmos` on the PATH) |
 | `main.go`, `app.go`, `export.go` | Node binary and wiring, written from the SDK's Apache-2.0 `simapp`. The ante handler is the SDK's stock one |
 | `run_local_network.sh` | Local validators on `127.0.0.1` |
 
@@ -32,7 +32,7 @@ Queries: `lockboxd query validatorset admin | validators | validator --consensus
 ## Build and run
 
 ```
-PATH=$HOME/.local/toolchains/go/bin:$PATH GOPATH=$HOME/.local/toolchains/gopath go build -o build/lockboxd .
+go build -o build/lockboxd .
 ./run_local_network.sh [--directory path] up [validator_count]
 ./run_local_network.sh status
 ./run_local_network.sh stop 2

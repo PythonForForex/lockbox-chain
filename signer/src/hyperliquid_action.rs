@@ -122,7 +122,7 @@ fn exchange_domain_separator() -> [u8; 32] {
     keccak256(&encoded)
 }
 
-// Same bytes as action_hash in hl-signer/lib/hl_signing.py: the action, the nonce, 0x00 or 0x01 plus the vault, then
+// Same bytes as Hyperliquid's own action_hash: the action, the nonce, 0x00 or 0x01 plus the vault, then
 // 0x00 plus expiresAfter in milliseconds. Hyperliquid recomputes this, so the same two values go in the posted body.
 pub fn phantom_agent_digest(action_bytes: &[u8], venue_nonce: u64, vault_address: Option<&[u8; 20]>, expires_after_milliseconds: u64) -> [u8; 32] {
     let mut connection_preimage = Vec::with_capacity(action_bytes.len() + 38);

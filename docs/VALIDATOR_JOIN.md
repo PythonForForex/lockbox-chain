@@ -110,7 +110,7 @@ Check `trust_hash` yourself against a second source before you start. State sync
 
 ```
 [Unit]
-Description=lockbox chain node
+Description=Lockbox node
 After=network-online.target
 Wants=network-online.target
 

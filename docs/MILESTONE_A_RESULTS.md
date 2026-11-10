@@ -19,7 +19,7 @@ The Milestone A test is complete. The chain keeps running.
 | Signers `s1`, `s2`, `s3` | 3 | Us | `s1` on `lockbox-1`, `s2` on `lockbox-2`, `s3` on `lockbox-3`, next to the validators there |
 | Coordinator | 1 | Us | On `lockbox-4` |
 | The external validator | 1, power 1,000,000 | Not us | Its own machine; added at height 33254 |
-| A node run by a Grok bot | 1 full node | Not us | Its own machine. Built from this repo and connected to the four founding validators; at its last report it had not finished syncing. It is not a validator and signed no blocks and no orders |
+| A node run by a Grok bot | 1 validator, power 1,000,000 | Not us | Its own machine, `grok-test-1`. Built from this repo and synced on its own, then added as a validator at height 150200 from its relayed key. It signed 12 blocks between 150204 and 150243 and then went offline. It signed no orders: none were sent while it was online |
 
 ## The evidence
 
@@ -120,6 +120,25 @@ curl -s -X POST https://api.hyperliquid.xyz/info -H 'Content-Type: application/j
 curl -s -X POST https://api.hyperliquid.xyz/info -H 'Content-Type: application/json' \
   -d '{"type":"userRole","user":"0xfce7a019fc4b20c2c646e393728e27f05cbfb06b"}'
 ```
+
+## The main blocker found after Milestone A, and what we are doing about it
+
+A Grok bot built a node from this repository and synced it on its own. It could not become a validator on its own. It had to relay its public validator key and node id through a chat room. Someone then had to notice the message, and the admin had to send the add by hand. The admin is a single key on one founding machine. Each hand-off is slow and easy to miss: the bot's first reply sat unread. It does not scale past one bot. No more Grok bots join until this is cleared.
+
+A second finding came with it. The Grok node ran inside the bot's own session and stopped after under a minute of signing, most likely when the bot's turn ended. It could not be restarted once the bot's usage ran out. A validator has to keep running when nobody is watching it.
+
+What we are doing, in this order:
+
+1. **The join request goes on the chain.** A node sends `MsgRequestJoin`, signed with its own consensus key over a fixed domain string, the chain id, its account, its node id and its public key. The chain checks the signature and adds the node at the next block. There is no relay and no admin step. The limits:
+   - 100,000 power each, at most 100 joiners;
+   - outsiders together stay small enough that the founders keep the chain live;
+   - one validator per account and one per IP;
+   - a joiner that misses 300 blocks in a row is removed and can ask again after one day.
+   This is built and tested on the `open-join` branch and is not live yet.
+2. **Upgrades without restarting the chain.** The same release adds the upgrade module and cosmovisor. Later changes then arrive as an upgrade plan on the chain, and every node switches binary at the same height by itself. `lockbox-milestone-a-1` keeps running and is not restarted. This one release goes in by a coordinated binary swap at a set height, and that is the last manual swap.
+3. **One file for a bot.** `SKILL.md` takes a bot from an empty machine to a synced node that sends its own join request.
+4. **The node outlives the bot.** `SKILL.md` leaves the node running as a system service on a machine the bot rents, not inside the bot's session.
+5. **The admin stops being one key.** The same release adds a two-step admin change: the current admin proposes a new address, and the change takes effect only when that address accepts it. It is built and tested on the `open-join` branch and is not live yet.
 
 ## What Milestone A does not prove yet
 

@@ -6,7 +6,8 @@ import aiohttp
 from aiohttp import web
 
 from coordinator.coordinator_rounds import (MAXIMUM_DEAD_MAN_WINDOW_SECONDS, MINIMUM_DEAD_MAN_WINDOW_SECONDS, CoordinatorConfig,
-                                            build_round_state, handle_intent, prepare_round)
+                                            build_round_state, handle_intent, log_event, prepare_round)
+from coordinator.hub_owner_check import follow_hub_claims, hub_owner_check_is_on
 from coordinator.venue_poster import refuse_venue_url
 
 
@@ -15,6 +16,7 @@ def load_coordinator_config(config_path: str) -> CoordinatorConfig:
         fields = json.load(config_file)
     fields['signer_urls'] = tuple(fields['signer_urls'])
     fields['chain_rest_urls'] = tuple(fields['chain_rest_urls'])
+    fields['hub_rest_urls'] = tuple(fields.get('hub_rest_urls', ()))
     config = CoordinatorConfig(**fields)
     refuse_venue_url(config.venue_exchange_url, config.allow_live_hyperliquid_exchange)
     if not MINIMUM_DEAD_MAN_WINDOW_SECONDS <= config.dead_man_window_seconds <= MAXIMUM_DEAD_MAN_WINDOW_SECONDS:
@@ -46,6 +48,9 @@ async def run_service(config: CoordinatorConfig) -> None:
         application = web.Application()
         application['round_state'] = build_round_state(config, http_session)
         application['round_lock'] = asyncio.Lock()
+        hub_claims_task = None
+        if hub_owner_check_is_on(config):
+            hub_claims_task = asyncio.create_task(follow_hub_claims(application['round_state'], log_event))
         application.add_routes([
             web.get('/health', handle_health),
             web.post('/prepare', handle_prepare),

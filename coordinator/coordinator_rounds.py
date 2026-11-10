@@ -9,6 +9,7 @@ from decimal import Decimal
 import aiohttp
 
 from coordinator.chain_reader import read_policy, read_venue_address
+from coordinator.hub_owner_check import build_owner_cache, hub_owner_refusal
 from coordinator.signer_client import ask_signers
 from coordinator.venue_digest import action_digest, actions_are_identical, expected_action, expires_after_milliseconds, recover_address
 from coordinator.venue_poster import build_signed_body, post_signed_action
@@ -36,6 +37,9 @@ class CoordinatorConfig:
     intent_lifetime_seconds: int
     dead_man_window_seconds: int = DEFAULT_DEAD_MAN_WINDOW_SECONDS
     allow_live_hyperliquid_exchange: bool = False
+    hub_rest_urls: tuple[str, ...] = ()
+    hub_websocket_url: str = ''
+    hub_account_id: str = ''
 
 
 def build_round_state(config: CoordinatorConfig, http_session: aiohttp.ClientSession) -> dict:
@@ -46,6 +50,7 @@ def build_round_state(config: CoordinatorConfig, http_session: aiohttp.ClientSes
         'highest_issued_nonce': 0,
         'armed_until_milliseconds_by_vault': {},
         'policy_by_delegate': {},
+        'owner_cache': build_owner_cache(),
     }
 
 
@@ -105,6 +110,10 @@ def build_rearm_intent(state: dict, delegate_key: str, vault_address: str, polic
 
 async def prepare_round(state: dict, delegate_key: str, vault_address: str) -> dict:
     config = state['config']
+    owner_refusal = hub_owner_refusal(state)
+    if owner_refusal is not None:
+        log_event('prepare_refused', config.key_ref, reason=owner_refusal, hub_account_id=config.hub_account_id)
+        return {'prepared': False, 'reason': owner_refusal}
     policy = await read_policy(state['http_session'], config.chain_rest_urls, config.key_ref, delegate_key)
     if policy is None:
         policy = state['policy_by_delegate'].get(delegate_key)
