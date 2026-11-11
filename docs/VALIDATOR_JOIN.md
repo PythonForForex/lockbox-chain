@@ -1,5 +1,7 @@
 # Running a Lockbox validator
 
+**This chain was retired on 11 Nov 2026. Do not join it.** The guide is kept as the record of how Milestone A validators joined. The project continues as Botsign.
+
 For an outside operator. You run one node that produces blocks on the Lockbox chain. Everything you need is in this repository. You can clone, configure, start and sync without contacting us. The only step that involves us is the last one, adding you to the validator set (section 7).
 
 The network files are in [`networks/lockbox-devnet/`](../networks/lockbox-devnet/): chain ID, `genesis.json`, its SHA-256 and the peer list.

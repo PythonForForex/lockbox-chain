@@ -1,6 +1,6 @@
 # Milestone A results
 
-The Milestone A test is complete. The chain keeps running.
+The Milestone A test is complete. The chain `lockbox-milestone-a-1` was retired on 11 Nov 2026. The project continues as Botsign.
 
 8 Nov 2026, chain `lockbox-milestone-a-1`. Everything below can be checked against the chain and the venue's public API. Nothing here asks you to trust us.
 
@@ -10,6 +10,7 @@ The Milestone A test is complete. The chain keeps running.
 2. A signer signs only what the policy on Lockbox's chain allows. The owner sets that policy, and the chain records every decision, both signed and refused, with its reason.
 3. A withdrawal, a transfer, an order over the size limit, an order after the policy was revoked, an old nonce, and a round with too few signers were all refused. Each refusal is on the chain.
 4. An external validator, on its own machine, joined the validator set and signed the blocks that recorded the last orders.
+5. A node set up by a Grok bot became a validator and signed the blocks that recorded two live orders on 11 Nov, together with the external validator.
 
 ## Who ran what
 
@@ -19,7 +20,7 @@ The Milestone A test is complete. The chain keeps running.
 | Signers `s1`, `s2`, `s3` | 3 | Us | `s1` on `lockbox-1`, `s2` on `lockbox-2`, `s3` on `lockbox-3`, next to the validators there |
 | Coordinator | 1 | Us | On `lockbox-4` |
 | The external validator | 1, power 1,000,000 | Not us | Its own machine; added at height 33254 |
-| A node run by a Grok bot | 1 validator, power 1,000,000 | Not us | Its own machine, `grok-test-1`. Built from this repo and synced on its own, then added as a validator at height 150200 from its relayed key. It signed 12 blocks between 150204 and 150243 and then went offline. It signed no orders: none were sent while it was online |
+| A node run by a Grok bot | 1 validator, power 1,000,000 | Not us | Its own machine, `grok-test-1`. Built from this repo and synced on its own, then added as a validator at height 150200 from its relayed key. It signed 12 blocks between 150204 and 150243 and went offline. Restarted by the bot on 11 Nov, it signed the blocks recording orders 601320050651 and 601320087888 |
 
 ## The evidence
 
@@ -44,8 +45,10 @@ The venue order ids come from Hyperliquid's public order history for the account
 | 598536117844 | [`0xac63460b…`](https://app.hyperliquid.xyz/explorer/tx/0xac63460b1d918974addd04485b9e4202014f00f0b894a846502bf15ddc95635f) | reduce-only sell, filled | 17:20:20 | request `a31ed065d7324531b38ba5c352701a24`, block 26265 | s1 (lockbox-1), s2 (lockbox-2) | lockbox-1, -2, -3, -4 |
 | 598603151430 | [`0xd1601a9b…`](https://app.hyperliquid.xyz/explorer/tx/0xd1601a9be087b9e0d2d904485d8c6802011800817b8ad8b27528c5ee9f8b93cb) | buy, IOC, filled | 19:49:04 | request `91d46675868e425b9931b08c77a28122`, block 33288 | s1 (lockbox-1), s3 (lockbox-3) | lockbox-1, -2, -3, -4 and the external validator |
 | 598603170550 | [`0xa81eaf8c…`](https://app.hyperliquid.xyz/explorer/tx/0xa81eaf8cfc78c740a99804485d8c9d016600c772977be6124be75adfbb7ca12b) | reduce-only sell, filled | 19:49:08 | request `ddc2888e74e24430980d056fb4f89423`, block 33291 | s1 (lockbox-1), s3 (lockbox-3) | lockbox-1, -2, -3, -4 and the external validator |
+| 601320050651 | [`0x43b710a5…`](https://app.hyperliquid.xyz/explorer/tx/0x43b710a5ede129b5453004488911eb02018f008b88e44887e77fbbf8ace5039f) | buy, IOC, filled | 04:23:56 (11 Nov) | request `9a0af42d6d984dd09581e90f169de414`, block 188408 | s1 (lockbox-1), s3 (lockbox-3) | lockbox-1, -2, -3, -4, the external validator and the Grok bot's node |
+| 601320087888 | [`0xdf8607fd…`](https://app.hyperliquid.xyz/explorer/tx/0xdf8607fdef9df0d2e0ff04488912250202c000e38a910fa4834eb350ae91cabd) | reduce-only sell, filled | 04:24:00 (11 Nov) | request `03ecf43aaa4345b0821148c1f22ab6e2`, block 188412 | s1 (lockbox-1), s2 (lockbox-2) | lockbox-1, -2, -3, -4, the external validator and the Grok bot's node |
 
-In each of those last rounds, s2 recorded `quorum_met_without_this_signer`: two signers were enough, so the third one stood down. Blocks 33287 to 33293 carry the external validator's signature in their commits.
+In each of the 8 Nov 19:49 rounds, s2 recorded `quorum_met_without_this_signer`: two signers were enough, so the third one stood down. In the 11 Nov rounds the third signer recorded a refusal too: s2 in three rounds, s3 in one. Blocks 33287 to 33293 carry the external validator's signature in their commits. Blocks 188407 to 188413, on 11 Nov, carry both the external validator's and the Grok bot's node's.
 
 ### Refusals, with the chain's own reason
 
@@ -68,6 +71,8 @@ Venue side, one per filled order. Each opens on Hyperliquid's explorer at `https
 | 598536117844 | tx 0xac63460b1d918974addd04485b9e4202014f00f0b894a846502bf15ddc95635f |
 | 598603151430 | tx 0xd1601a9be087b9e0d2d904485d8c6802011800817b8ad8b27528c5ee9f8b93cb |
 | 598603170550 | tx 0xa81eaf8cfc78c740a99804485d8c9d016600c772977be6124be75adfbb7ca12b |
+| 601320050651 | tx 0x43b710a5ede129b5453004488911eb02018f008b88e44887e77fbbf8ace5039f |
+| 601320087888 | tx 0xdf8607fdef9df0d2e0ff04488912250202c000e38a910fa4834eb350ae91cabd |
 
 Chain side, one per decision. A signer that stood down recorded `quorum_met_without_this_signer` as a refusal. There is no public explorer for this chain; on a synced node, `curl -s "localhost:26657/tx?hash=0x<hash>"` returns the transaction:
 
@@ -98,6 +103,7 @@ There were 50 blocks carrying a decision, from height 365 to 33293:
 - lockbox-1, lockbox-2 and lockbox-4 signed all 50.
 - lockbox-3 signed 44. Its validator was stopped on purpose for the one-signer-down test.
 - The external validator signed all 7 decision blocks after it joined.
+- On 11 Nov, two more orders: decision blocks 188407 to 188413, with 12 decision transactions (`C1CB0AB9…`, `7D6AC1D0…`, `37E57229…`, `41E74256…`, `34856775…`, `9A6DA78B…`, `B626A9C4…`, `4ABDB14D…`, `1D271AEF…`, `F225E45D…`, `41BFAD1D…`, `5093655F…`). All 6 validators signed each of those blocks, the Grok bot's node among them.
 
 Of the 34 signed rounds, s1 took part in 34, s2 in 21 and s3 in 13.
 
@@ -140,6 +146,8 @@ What we are doing, in this order:
 4. **The node outlives the bot.** `SKILL.md` leaves the node running as a system service on a machine the bot rents, not inside the bot's session.
 5. **The admin stops being one key.** The same release adds a two-step admin change: the current admin proposes a new address, and the change takes effect only when that address accepts it. It is built and tested on the `open-join` branch and is not live yet.
 
+**Update, 11 Nov 2026.** This chain is not being upgraded. The project continues as Botsign, on a new chain. The join request and the two-step admin change are in it from the first block, so no coordinated binary swap is needed. The new set of signers generates its key jointly instead of importing it.
+
 ## What Milestone A does not prove yet
 
 - The three signers are run by one operator, on one provider.
@@ -147,3 +155,10 @@ What we are doing, in this order:
 - The key was imported, not generated jointly.
 - The pair s2 plus s3 has not signed a round without s1.
 - The chain binary is not yet checked against a release hash on the signer side.
+
+## Closing record
+
+- Chain `lockbox-milestone-a-1` ran from 8 Nov to 11 Nov 2026 and was retired on 11 Nov. Its full block history, genesis and validator-set history are archived.
+- At retirement there were 6 validators: the 4 founding validators, the external validator and the Grok bot's node.
+- 6 orders filled on the venue, each signed by 2 of 3 signers under the policy on chain. Each refusal is on chain with its reason.
+- The chain halted at height 196500 at 07:29 UTC on 11 Nov 2026, when the four machines were destroyed. The signer machines, their key shares and every snapshot of them are gone.

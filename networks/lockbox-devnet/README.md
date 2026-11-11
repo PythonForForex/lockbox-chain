@@ -16,7 +16,7 @@ The Lockbox development network. It runs in dev mode with test keys, and we are 
 ## Changes to expect
 
 - **Peers.** The list can change when we move a node. `peers.txt` is always current.
-- **Fresh genesis.** `lockbox-milestone-a-1` continues. If Lockbox ever starts from a fresh genesis, it will be announced here first, and you re-sync from a new folder under `networks/`.
+- **Retired.** `lockbox-milestone-a-1` was retired on 11 Nov 2026. Do not start a node for it. The project continues as Botsign.
 
 To join, follow [docs/VALIDATOR_JOIN.md](../../docs/VALIDATOR_JOIN.md).
 
