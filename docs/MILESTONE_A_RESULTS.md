@@ -1,6 +1,6 @@
 # Milestone A results
 
-The Milestone A test is complete. The chain `lockbox-milestone-a-1` was retired on 11 Nov 2026. The project continues as Botsign.
+The Milestone A test is complete. The chain `lockbox-milestone-a-1` was retired on 11 Nov 2026. Lockbox continues as Signer, part of TraderSwift: https://github.com/traderswift-io
 
 8 Nov 2026, chain `lockbox-milestone-a-1`. Everything below can be checked against the chain and the venue's public API. Nothing here asks you to trust us.
 
@@ -146,7 +146,7 @@ What we are doing, in this order:
 4. **The node outlives the bot.** `SKILL.md` leaves the node running as a system service on a machine the bot rents, not inside the bot's session.
 5. **The admin stops being one key.** The same release adds a two-step admin change: the current admin proposes a new address, and the change takes effect only when that address accepts it. It is built and tested on the `open-join` branch and is not live yet.
 
-**Update, 11 Nov 2026.** This chain is not being upgraded. The project continues as Botsign, on a new chain. The join request and the two-step admin change are in it from the first block, so no coordinated binary swap is needed. The new set of signers generates its key jointly instead of importing it.
+**Update, 11 Nov 2026.** This chain is not being upgraded. Lockbox continues as Signer, part of TraderSwift, on a new chain: https://github.com/traderswift-io. The join request and the two-step admin change are in it from the first block, so no coordinated binary swap is needed. The new set of signers generates its key jointly instead of importing it.
 
 ## What Milestone A does not prove yet
 

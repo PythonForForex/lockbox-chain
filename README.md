@@ -1,6 +1,6 @@
 # Lockbox
 
-**This repository is archived.** Lockbox continues as **Botsign**. The chain `lockbox-milestone-a-1` was retired on 11 Nov 2026. The Milestone A record below stays as it was published.
+**This repository is archived.** Lockbox continues as Signer, part of TraderSwift: https://github.com/traderswift-io. The chain `lockbox-milestone-a-1` was retired on 11 Nov 2026. The Milestone A record below stays as it was published.
 
 [Milestone A results](docs/MILESTONE_A_RESULTS.md): what was proven and how to check it yourself.
 

@@ -16,7 +16,7 @@ The Lockbox development network. It runs in dev mode with test keys, and we are 
 ## Changes to expect
 
 - **Peers.** The list can change when we move a node. `peers.txt` is always current.
-- **Retired.** `lockbox-milestone-a-1` was retired on 11 Nov 2026. Do not start a node for it. The project continues as Botsign.
+- **Retired.** `lockbox-milestone-a-1` was retired on 11 Nov 2026. Do not start a node for it. Lockbox continues as Signer, part of TraderSwift: https://github.com/traderswift-io
 
 To join, follow [docs/VALIDATOR_JOIN.md](../../docs/VALIDATOR_JOIN.md).
 

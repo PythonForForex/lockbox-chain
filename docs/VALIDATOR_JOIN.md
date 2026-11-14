@@ -1,6 +1,6 @@
 # Running a Lockbox validator
 
-**This chain was retired on 11 Nov 2026. Do not join it.** The guide is kept as the record of how Milestone A validators joined. The project continues as Botsign.
+**This chain was retired on 11 Nov 2026. Do not join it.** The guide is kept as the record of how Milestone A validators joined. Lockbox continues as Signer, part of TraderSwift: https://github.com/traderswift-io
 
 For an outside operator. You run one node that produces blocks on the Lockbox chain. Everything you need is in this repository. You can clone, configure, start and sync without contacting us. The only step that involves us is the last one, adding you to the validator set (section 7).
 
